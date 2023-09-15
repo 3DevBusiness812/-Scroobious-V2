@@ -1,0 +1,66 @@
+services:
+  ##########################################################################################
+  # Production
+  ##########################################################################################
+  - type: web
+    name: scroobious-v2
+    env: node
+    region: oregon
+    plan: standard
+    branch: production
+    healthCheckPath: /api/health
+    buildCommand: npm ci; npm run build
+    startCommand: npm run start
+    scaling:
+      minInstances: 1
+      maxInstances: 3
+      targetMemoryPercent: 80
+      targetCPUPercent: 80
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: scroobious-db-prod
+          property: connectionString
+      - fromGroup: v2-production
+
+  ##########################################################################################
+  # Staging
+  ##########################################################################################
+  - type: web
+    name: scroobious-v2-staging
+    env: node
+    region: oregon
+    plan: standard
+    branch: main
+    healthCheckPath: /api/health
+    buildCommand: npm ci; npm run build
+    startCommand: npm run start
+    scaling:
+      minInstances: 1
+      maxInstances: 3
+      targetMemoryPercent: 80
+      targetCPUPercent: 80
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: scroobious-db-staging
+          property: connectionString
+      - fromGroup: v2-staging
+
+databases:
+  - name: scroobious-db-prod
+    databaseName: scroobious
+    plan: standard
+    user: scroobious_user # optional
+    ipAllowList:
+      - source: 44.193.153.196/32
+        description: Preset.io
+      - source: 52.70.123.52/32
+        description: Preset.io
+      - source: 54.83.88.93/32
+        description: Preset.io
+  - name: scroobious-db-staging
+    databaseName: scroobious_staging
+    plan: starter
+    user: scroobious_user # optional
+    ipAllowList: [] # only allow internal connections

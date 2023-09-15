@@ -1,0 +1,20 @@
+{
+    "CORSRules": [
+        {
+            "AllowedHeaders": [
+                "*"
+            ],
+            "AllowedMethods": [
+                "PUT",
+                "GET",
+                "POST"
+            ],
+            "AllowedOrigins": [
+                "https://scroobious-web-staging.onrender.com",
+                "https://scroobious-v2-staging.onrender.com",
+                "http://localhost:3000",
+                "http://v2.localhost:3001"
+            ]
+        }
+    ]
+}

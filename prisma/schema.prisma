@@ -1,0 +1,1666 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model AccreditationStatus {
+  id          String    @id(map: "pk accreditation_status id") @default(nanoid()) @db.VarChar
+  description String    @db.VarChar
+  archived    Boolean
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  createdById String    @map("created_by_id") @db.VarChar
+  updatedAt   DateTime? @default(now()) @map("updated_at") @db.Timestamptz(6)
+  updatedById String?   @map("updated_by_id") @db.VarChar
+
+  @@map("accreditation_status")
+}
+
+model AuthAccount {
+  id                 String    @id(map: "pk auth_account id") @default(nanoid()) @db.VarChar
+  createdAt          DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  createdById        String    @map("created_by_id") @db.VarChar
+  updatedAt          DateTime? @default(now()) @map("updated_at") @db.Timestamptz(6)
+  updatedById        String?   @map("updated_by_id") @db.VarChar
+  deletedAt          String?   @map("deleted_at") @db.VarChar
+  deletedById        String?   @map("deleted_by_id") @db.VarChar
+  version            Int
+  ownerId            String    @map("owner_id") @db.VarChar
+  userId             String    @map("user_id") @db.VarChar
+  providerType       String    @map("provider_type") @db.VarChar
+  providerId         String    @map("provider_id") @db.VarChar
+  providerAccountId  String    @map("provider_account_id") @db.VarChar
+  refreshToken       String?   @map("refresh_token")
+  accessToken        String?   @map("access_token")
+  accessTokenExpires DateTime? @map("access_token_expires") @db.Timestamptz(6)
+  compoundId         String    @unique(map: "uq auth_account compound_id") @map("compound_id") @db.VarChar
+  user               User      @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk auth_account user_id")
+
+  @@index([providerAccountId], map: "idx auth_account provider_account_id")
+  @@index([providerId], map: "idx auth_account provider_id")
+  @@index([userId], map: "idx auth_account user_id")
+  @@map("auth_account")
+}
+
+model CalendlyWebhookEvent {
+  id          String    @id(map: "pk calendly_webhook_event id") @default(nanoid()) @db.VarChar
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  createdById String    @map("created_by_id") @db.VarChar
+  updatedAt   DateTime? @default(now()) @map("updated_at") @db.Timestamptz(6)
+  updatedById String?   @map("updated_by_id") @db.VarChar
+  deletedAt   String?   @map("deleted_at") @db.VarChar
+  deletedById String?   @map("deleted_by_id") @db.VarChar
+  version     Int
+  ownerId     String    @map("owner_id") @db.VarChar
+  status      String    @default("NEW") @db.VarChar
+  type        String    @db.VarChar
+  raw         Json
+
+  @@map("calendly_webhook_event")
+}
+
+model CheckoutRequest {
+  id           String    @id(map: "pk checkout_request id") @default(nanoid()) @db.VarChar
+  createdAt    DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  createdById  String    @map("created_by_id") @db.VarChar
+  updatedAt    DateTime? @default(now()) @map("updated_at") @db.Timestamptz(6)
+  updatedById  String?   @map("updated_by_id") @db.VarChar
+  deletedAt    String?   @map("deleted_at") @db.VarChar
+  deletedById  String?   @map("deleted_by_id") @db.VarChar
+  version      Int
+  ownerId      String    @map("owner_id") @db.VarChar
+  stripePlanId String    @map("stripe_plan_id") @db.VarChar
+
+  @@map("checkout_request")
+}
+
+model CheckoutResponse {
+  id              String    @id(map: "pk checkout_response id") @default(nanoid()) @db.VarChar
+  createdAt       DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  createdById     String    @map("created_by_id") @db.VarChar
+  updatedAt       DateTime? @default(now()) @map("updated_at") @db.Timestamptz(6)
+  updatedById     String?   @map("updated_by_id") @db.VarChar
+  deletedAt       String?   @map("deleted_at") @db.VarChar
+  deletedById     String?   @map("deleted_by_id") @db.VarChar
+  version         Int
+  ownerId         String    @map("owner_id") @db.VarChar
+  stripeSessionId String    @map("stripe_session_id") @db.VarChar
+
+  @@map("checkout_response")
+}
+
+model City {
+  id              String        @id(map: "pk city id") @default(nanoid()) @db.VarChar
+  lat             Float?
+  lon             Float?
+  population      Int?
+  stateProvinceId String        @map("state_province_id") @db.VarChar
+  description     String        @db.VarChar
+  archived        Boolean
+  createdAt       DateTime      @default(now()) @map("created_at") @db.Timestamptz(6)
+  createdById     String        @map("created_by_id") @db.VarChar
+  updatedAt       DateTime?     @default(now()) @map("updated_at") @db.Timestamptz(6)
+  updatedById     String?       @map("updated_by_id") @db.VarChar
+  stateProvince   StateProvince @relation(fields: [stateProvinceId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk city state_province_id")
+
+  @@map("city")
+}
+
+model CompanyRole {
+  id          String    @id(map: "pk company_role id") @default(nanoid()) @db.VarChar
+  description String    @db.VarChar
+  archived    Boolean
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  createdById String    @map("created_by_id") @db.VarChar
+  updatedAt   DateTime? @default(now()) @map("updated_at") @db.Timestamptz(6)
+  updatedById String?   @map("updated_by_id") @db.VarChar
+
+  @@map("company_role")
+}
+
+model CompanyStage {
+  id          String    @id(map: "pk company_stage id") @default(nanoid()) @db.VarChar
+  description String    @db.VarChar
+  archived    Boolean
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  createdById String    @map("created_by_id") @db.VarChar
+  updatedAt   DateTime? @default(now()) @map("updated_at") @db.Timestamptz(6)
+  updatedById String?   @map("updated_by_id") @db.VarChar
+
+  @@map("company_stage")
+}
+
+model Conversation {
+  id                       String                    @id(map: "pk conversation id") @default(nanoid()) @db.VarChar
+  createdAt                DateTime                  @default(now()) @map("created_at") @db.Timestamptz(6)
+  createdById              String                    @map("created_by_id") @db.VarChar
+  updatedAt                DateTime?                 @default(now()) @map("updated_at") @db.Timestamptz(6)
+  updatedById              String?                   @map("updated_by_id") @db.VarChar
+  deletedAt                String?                   @map("deleted_at") @db.VarChar
+  deletedById              String?                   @map("deleted_by_id") @db.VarChar
+  version                  Int
+  ownerId                  String                    @map("owner_id") @db.VarChar
+  friendlyName             String?                   @map("friendly_name") @db.VarChar
+  conversationMessages     ConversationMessage[]
+  conversationParticipants ConversationParticipant[]
+
+  @@map("conversation")
+}
+
+model ConversationMessage {
+  id                  String                @id(map: "pk conversation_message id") @default(nanoid()) @db.VarChar
+  createdAt           DateTime              @default(now()) @map("created_at") @db.Timestamptz(6)
+  createdById         String                @map("created_by_id") @db.VarChar
+  updatedAt           DateTime?             @default(now()) @map("updated_at") @db.Timestamptz(6)
+  updatedById         String?               @map("updated_by_id") @db.VarChar
+  deletedAt           String?               @map("deleted_at") @db.VarChar
+  deletedById         String?               @map("deleted_by_id") @db.VarChar
+  version             Int
+  ownerId             String                @map("owner_id") @db.VarChar
+  conversationId      String                @map("conversation_id") @db.VarChar
+  body                String                @db.VarChar(1600)
+  readAt              DateTime?             @map("read_at") @db.Timestamptz(6)
+  contextDetails      Json?                 @map("context_details")
+  pitchDeckId         String?               @map("pitch_deck_id") @db.VarChar
+  rootThreadMessageId String?               @map("root_thread_message_id") @db.VarChar
+  conversation        Conversation          @relation(fields: [conversationId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk conversation_message conversation_id")
+  user                User                  @relation(fields: [createdById], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk conversation_message created_by_id")
+  pitchDeck           PitchDeck?            @relation(fields: [pitchDeckId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk conversation_message pitch_deck_id")
+  rootThreadMessage   ConversationMessage?  @relation("ThreadMessages", fields: [rootThreadMessageId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk conversation_message root_thread_message_id")
+  threadMessages      ConversationMessage[] @relation("ThreadMessages")
+
+  @@map("conversation_message")
+}
+
+model ConversationParticipant {
+  id                 String       @id(map: "pk conversation_participant id") @default(nanoid()) @db.VarChar
+  createdAt          DateTime     @default(now()) @map("created_at") @db.Timestamptz(6)
+  createdById        String       @map("created_by_id") @db.VarChar
+  updatedAt          DateTime?    @default(now()) @map("updated_at") @db.Timestamptz(6)
+  updatedById        String?      @map("updated_by_id") @db.VarChar
+  deletedAt          String?      @map("deleted_at") @db.VarChar
+  deletedById        String?      @map("deleted_by_id") @db.VarChar
+  version            Int
+  ownerId            String       @map("owner_id") @db.VarChar
+  conversationId     String       @map("conversation_id") @db.VarChar
+  userId             String       @map("user_id") @db.VarChar
+  lastReadAt         DateTime?    @map("last_read_at") @db.Timestamptz(6)
+  messageAnonymously Boolean      @default(false) @map("message_anonymously")
+  conversation       Conversation @relation(fields: [conversationId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk conversation_participant conversation_id")
+  user               User         @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk conversation_participant user_id")
+
+  @@map("conversation_participant")
+}
+
+model CorporateStructure {
+  id          String    @id(map: "pk corporate_structure id") @default(nanoid()) @db.VarChar
+  description String    @db.VarChar
+  archived    Boolean
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  createdById String    @map("created_by_id") @db.VarChar
+  updatedAt   DateTime? @default(now()) @map("updated_at") @db.Timestamptz(6)
+  updatedById String?   @map("updated_by_id") @db.VarChar
+
+  @@map("corporate_structure")
+}
+
+model Country {
+  id          String    @id(map: "pk country id") @default(nanoid()) @db.VarChar
+  description String    @db.VarChar
+  archived    Boolean
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  createdById String    @map("created_by_id") @db.VarChar
+  updatedAt   DateTime? @default(now()) @map("updated_at") @db.Timestamptz(6)
+  updatedById String?   @map("updated_by_id") @db.VarChar
+
+  @@map("country")
+}
+
+model Course {
+  id                 String           @id(map: "pk course id") @default(nanoid()) @db.VarChar
+  createdAt          DateTime         @default(now()) @map("created_at") @db.Timestamptz(6)
+  createdById        String           @map("created_by_id") @db.VarChar
+  updatedAt          DateTime?        @default(now()) @map("updated_at") @db.Timestamptz(6)
+  updatedById        String?          @map("updated_by_id") @db.VarChar
+  deletedAt          String?          @map("deleted_at") @db.VarChar
+  deletedById        String?          @map("deleted_by_id") @db.VarChar
+  version            Int
+  ownerId            String           @map("owner_id") @db.VarChar
+  status             String           @default("ACTIVE") @db.VarChar
+  currentAtep        String           @map("current_step") @db.VarChar
+  courseDefinitionId String           @map("course_definition_id") @db.VarChar
+  pitchId            String           @unique(map: "uq course pitch_id") @map("pitch_id") @db.VarChar
+  courseDefinition   CourseDefinition @relation(fields: [courseDefinitionId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk course course_definition_id")
+  pitch              Pitch            @relation(fields: [pitchId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk course pitch_id")
+  courseProducts     CourseProduct[]
+  courseSteps        CourseStep[]
+
+  @@map("course")
+}
+
+model CourseDefinition {
+  id                       String                    @id(map: "pk course_definition id") @default(nanoid()) @db.VarChar
+  createdAt                DateTime                  @default(now()) @map("created_at") @db.Timestamptz(6)
+  createdById              String                    @map("created_by_id") @db.VarChar
+  updatedAt                DateTime?                 @default(now()) @map("updated_at") @db.Timestamptz(6)
+  updatedById              String?                   @map("updated_by_id") @db.VarChar
+  deletedAt                String?                   @map("deleted_at") @db.VarChar
+  deletedById              String?                   @map("deleted_by_id") @db.VarChar
+  version                  Int
+  ownerId                  String                    @map("owner_id") @db.VarChar
+  name                     String                    @db.VarChar
+  description              String                    @db.VarChar
+  courses                  Course[]
+  courseDefinitionProducts CourseDefinitionProduct[]
+  courseStepDefinitions    CourseStepDefinition[]
+
+  @@map("course_definition")
+}
+
+model CourseDefinitionProduct {
+  id                 String           @id(map: "pk course_definition_product id") @default(nanoid()) @db.VarChar
+  createdAt          DateTime         @default(now()) @map("created_at") @db.Timestamptz(6)
+  createdById        String           @map("created_by_id") @db.VarChar
+  updatedAt          DateTime?        @default(now()) @map("updated_at") @db.Timestamptz(6)
+  updatedById        String?          @map("updated_by_id") @db.VarChar
+  deletedAt          String?          @map("deleted_at") @db.VarChar
+  deletedById        String?          @map("deleted_by_id") @db.VarChar
+  version            Int
+  ownerId            String           @map("owner_id") @db.VarChar
+  name               String           @db.VarChar
+  description        String           @db.VarChar
+  courseDefinitionId String           @map("course_definition_id") @db.VarChar
+  productId          String           @map("product_id") @db.VarChar
+  courseDefinition   CourseDefinition @relation(fields: [courseDefinitionId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk course_definition_product course_definition_id")
+  product            Product          @relation(fields: [productId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk course_definition_product product_id")
+
+  @@map("course_definition_product")
+}
+
+model CourseProduct {
+  id                    String                 @id(map: "pk course_product id") @default(nanoid()) @db.VarChar
+  createdAt             DateTime               @default(now()) @map("created_at") @db.Timestamptz(6)
+  createdById           String                 @map("created_by_id") @db.VarChar
+  updatedAt             DateTime?              @default(now()) @map("updated_at") @db.Timestamptz(6)
+  updatedById           String?                @map("updated_by_id") @db.VarChar
+  deletedAt             String?                @map("deleted_at") @db.VarChar
+  deletedById           String?                @map("deleted_by_id") @db.VarChar
+  version               Int
+  ownerId               String                 @map("owner_id") @db.VarChar
+  courseId              String                 @map("course_id") @db.VarChar
+  productId             String                 @map("product_id") @db.VarChar
+  status                String                 @default("AVAILABLE") @db.VarChar
+  objectId              String?                @map("object_id") @db.VarChar
+  course                Course                 @relation(fields: [courseId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk course_product course_id")
+  product               Product                @relation(fields: [productId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk course_product product_id")
+  pitchMeetingFeedbacks PitchMeetingFeedback[]
+  pitchWrittenFeedbacks PitchWrittenFeedback[]
+
+  @@map("course_product")
+}
+
+model CourseStep {
+  id                     String               @id(map: "pk course_step id") @default(nanoid()) @db.VarChar
+  createdAt              DateTime             @default(now()) @map("created_at") @db.Timestamptz(6)
+  createdById            String               @map("created_by_id") @db.VarChar
+  updatedAt              DateTime?            @default(now()) @map("updated_at") @db.Timestamptz(6)
+  updatedById            String?              @map("updated_by_id") @db.VarChar
+  deletedAt              String?              @map("deleted_at") @db.VarChar
+  deletedById            String?              @map("deleted_by_id") @db.VarChar
+  version                Int
+  ownerId                String               @map("owner_id") @db.VarChar
+  courseId               String               @map("course_id") @db.VarChar
+  data                   Json
+  status                 String               @default("COMPLETE") @db.VarChar
+  courseStepDefinitionId String               @map("course_step_definition_id") @db.VarChar
+  course                 Course               @relation(fields: [courseId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk course_step course_id")
+  courseStepDefinition   CourseStepDefinition @relation(fields: [courseStepDefinitionId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk course_step course_step_definition_id")
+  user                   User                 @relation(fields: [createdById], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk course_step created_by_id")
+
+  @@map("course_step")
+}
+
+model CourseStepDefinition {
+  id                     String             @id(map: "pk course_step_definition id") @default(nanoid()) @db.VarChar
+  createdAt              DateTime           @default(now()) @map("created_at") @db.Timestamptz(6)
+  createdById            String             @map("created_by_id") @db.VarChar
+  updatedAt              DateTime?          @default(now()) @map("updated_at") @db.Timestamptz(6)
+  updatedById            String?            @map("updated_by_id") @db.VarChar
+  deletedAt              String?            @map("deleted_at") @db.VarChar
+  deletedById            String?            @map("deleted_by_id") @db.VarChar
+  version                Int
+  ownerId                String             @map("owner_id") @db.VarChar
+  name                   String             @db.VarChar
+  section                String             @db.VarChar
+  description            String             @db.VarChar
+  type                   String             @db.VarChar
+  sequenceNum            Int                @map("sequence_num")
+  config                 Json
+  courseStepDefinitionId String             @map("course_definition_id") @db.VarChar
+  eventType              String?            @map("event_type") @db.VarChar
+  courseSteps            CourseStep[]
+  courseDefinition       CourseDefinition   @relation(fields: [courseStepDefinitionId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk course_step_definition course_definition_id")
+  pitchDeckSections      PitchDeckSection[]
+
+  @@map("course_step_definition")
+}
+
+model Criteria {
+  id          String    @id(map: "pk criteria id") @default(nanoid()) @db.VarChar
+  description String    @db.VarChar
+  archived    Boolean
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  createdById String    @map("created_by_id") @db.VarChar
+  updatedAt   DateTime? @default(now()) @map("updated_at") @db.Timestamptz(6)
+  updatedById String?   @map("updated_by_id") @db.VarChar
+
+  @@map("criteria")
+}
+
+model Disability {
+  id          String    @id(map: "pk disability id") @default(nanoid()) @db.VarChar
+  description String    @db.VarChar
+  archived    Boolean
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  createdById String    @map("created_by_id") @db.VarChar
+  updatedAt   DateTime? @default(now()) @map("updated_at") @db.Timestamptz(6)
+  updatedById String?   @map("updated_by_id") @db.VarChar
+
+  @@map("disability")
+}
+
+model Ethnicity {
+  id          String    @id(map: "pk ethnicity id") @default(nanoid()) @db.VarChar
+  description String    @db.VarChar
+  archived    Boolean
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  createdById String    @map("created_by_id") @db.VarChar
+  updatedAt   DateTime? @default(now()) @map("updated_at") @db.Timestamptz(6)
+  updatedById String?   @map("updated_by_id") @db.VarChar
+
+  @@map("ethnicity")
+}
+
+model Event {
+  id            String   @id(map: "pk event id") @default(nanoid()) @db.VarChar
+  type          String   @db.VarChar
+  status        String   @default("NEW") @db.VarChar
+  objectType    String   @map("object_type") @db.VarChar
+  objectId      String   @map("object_id") @db.VarChar
+  ownerId       String   @map("owner_id") @db.VarChar
+  payload       Json?
+  createdAt     DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  createdById   String   @map("created_by_id") @db.VarChar
+  statusMessage String?  @map("status_message") @db.VarChar
+
+  @@map("event")
+}
+
+model EventType {
+  id                String    @id(map: "pk event_type id") @default(nanoid()) @db.VarChar
+  createdAt         DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  createdById       String    @map("created_by_id") @db.VarChar
+  updatedAt         DateTime? @default(now()) @map("updated_at") @db.Timestamptz(6)
+  updatedById       String?   @map("updated_by_id") @db.VarChar
+  deletedAt         String?   @map("deleted_at") @db.VarChar
+  deletedById       String?   @map("deleted_by_id") @db.VarChar
+  version           Int
+  ownerId           String    @map("owner_id") @db.VarChar
+  name              String    @unique(map: "uq event_type name") @db.VarChar
+  template          String?   @db.VarChar
+  allowSubscription Boolean   @default(true) @map("allow_subscription")
+
+  @@map("event_type")
+}
+
+model ExternalSystemId {
+  id                 String    @id(map: "pk external_system_id id") @default(nanoid()) @db.VarChar
+  createdAt          DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  createdById        String    @map("created_by_id") @db.VarChar
+  updatedAt          DateTime? @default(now()) @map("updated_at") @db.Timestamptz(6)
+  updatedById        String?   @map("updated_by_id") @db.VarChar
+  deletedAt          String?   @map("deleted_at") @db.VarChar
+  deletedById        String?   @map("deleted_by_id") @db.VarChar
+  version            Int
+  ownerId            String    @map("owner_id") @db.VarChar
+  externalSystemId   String    @map("external_system_id") @db.VarChar
+  externalSystemName String    @map("external_system_name") @db.VarChar
+  userId             String?   @map("user_id") @db.VarChar
+  user               User?     @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk external_system_id user_id")
+
+  @@map("external_system_id")
+}
+
+model File {
+  id                   String                 @id(map: "pk file id") @default(nanoid()) @db.VarChar
+  createdAt            DateTime               @default(now()) @map("created_at") @db.Timestamptz(6)
+  createdById          String                 @map("created_by_id") @db.VarChar
+  updatedAt            DateTime?              @default(now()) @map("updated_at") @db.Timestamptz(6)
+  updatedById          String?                @map("updated_by_id") @db.VarChar
+  deletedAt            String?                @map("deleted_at") @db.VarChar
+  deletedById          String?                @map("deleted_by_id") @db.VarChar
+  version              Int
+  ownerId              String                 @map("owner_id") @db.VarChar
+  url                  String                 @db.VarChar
+  perk                 Perk?
+  pitchDeck            PitchDeck?
+  pitchMeetingFeedback PitchMeetingFeedback[]
+  suggestedResource    SuggestedResource?
+  user                 User?
+  video                Video?
+
+  @@map("file")
+}
+
+model FileUpload {
+  id          String    @id(map: "pk file_upload id") @default(nanoid()) @db.VarChar
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  createdById String    @map("created_by_id") @db.VarChar
+  updatedAt   DateTime? @default(now()) @map("updated_at") @db.Timestamptz(6)
+  updatedById String?   @map("updated_by_id") @db.VarChar
+  deletedAt   String?   @map("deleted_at") @db.VarChar
+  deletedById String?   @map("deleted_by_id") @db.VarChar
+  version     Int
+  ownerId     String    @map("owner_id") @db.VarChar
+  filePath    String    @map("file_path") @db.VarChar
+
+  @@map("file_upload")
+}
+
+model FounderProfile {
+  id                 String    @id(map: "pk founder_profile id") @default(nanoid()) @db.VarChar
+  createdAt          DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  createdById        String    @map("created_by_id") @db.VarChar
+  updatedAt          DateTime? @default(now()) @map("updated_at") @db.Timestamptz(6)
+  updatedById        String?   @map("updated_by_id") @db.VarChar
+  deletedAt          String?   @map("deleted_at") @db.VarChar
+  deletedById        String?   @map("deleted_by_id") @db.VarChar
+  version            Int
+  ownerId            String    @map("owner_id") @db.VarChar
+  userId             String    @unique(map: "uq founder_profile user_id") @map("user_id") @db.VarChar
+  stateProvince      String    @map("state_province") @db.VarChar
+  twitterUrl         String?   @map("twitter_url") @db.VarChar
+  linkedinUrl        String?   @map("linkedin_url") @db.VarChar
+  ethnicities        String[]  @db.VarChar
+  gender             String?   @db.VarChar
+  sexualOrientation  String?   @map("sexual_orientation") @db.VarChar
+  transgender        String?   @db.VarChar
+  disability         String?   @db.VarChar
+  workingStatus      String?   @map("working_status") @db.VarChar
+  source             String?   @db.VarChar
+  pronouns           String?   @db.VarChar
+  bubbleLocation     String?   @map("bubble_location") @db.VarChar
+  companyStage       String?   @map("company_stage") @db.VarChar
+  fundingStatus      String?   @map("funding_status") @db.VarChar
+  industry           String[]  @db.VarChar
+  presentationStatus String?   @map("presentation_status") @db.VarChar
+  companyRoles       String[]  @map("company_roles") @db.VarChar
+
+  @@map("founder_profile")
+}
+
+model FundingStatus {
+  id          String    @id(map: "pk funding_status id") @default(nanoid()) @db.VarChar
+  description String    @db.VarChar
+  archived    Boolean
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  createdById String    @map("created_by_id") @db.VarChar
+  updatedAt   DateTime? @default(now()) @map("updated_at") @db.Timestamptz(6)
+  updatedById String?   @map("updated_by_id") @db.VarChar
+
+  @@map("funding_status")
+}
+
+model Gender {
+  id          String    @id(map: "pk gender id") @default(nanoid()) @db.VarChar
+  description String    @db.VarChar
+  archived    Boolean
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  createdById String    @map("created_by_id") @db.VarChar
+  updatedAt   DateTime? @default(now()) @map("updated_at") @db.Timestamptz(6)
+  updatedById String?   @map("updated_by_id") @db.VarChar
+
+  @@map("gender")
+}
+
+model Industry {
+  id          String    @id(map: "pk industry id") @default(nanoid()) @db.VarChar
+  description String    @db.VarChar
+  archived    Boolean
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  createdById String    @map("created_by_id") @db.VarChar
+  updatedAt   DateTime? @default(now()) @map("updated_at") @db.Timestamptz(6)
+  updatedById String?   @map("updated_by_id") @db.VarChar
+
+  @@map("industry")
+}
+
+model InvestorProfile {
+  id                    String    @id(map: "pk investor_profile id") @default(nanoid()) @db.VarChar
+  createdAt             DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  createdById           String    @map("created_by_id") @db.VarChar
+  updatedAt             DateTime? @default(now()) @map("updated_at") @db.Timestamptz(6)
+  updatedById           String?   @map("updated_by_id") @db.VarChar
+  deletedAt             String?   @map("deleted_at") @db.VarChar
+  deletedById           String?   @map("deleted_by_id") @db.VarChar
+  version               Int
+  ownerId               String    @map("owner_id") @db.VarChar
+  accreditationStatuses String[]  @map("accreditation_statuses") @db.VarChar
+  linkedinUrl           String?   @map("linkedin_url") @db.VarChar
+  investorTypes         String[]  @map("investor_types") @db.VarChar
+  thesis                String?
+  criteria              String[]  @db.VarChar
+  industries            String[]  @db.VarChar
+  demographics          String[]  @db.VarChar
+  stateProvince         String?   @map("state_province") @db.VarChar
+  userId                String    @unique(map: "uq investor_profile user_id") @map("user_id") @db.VarChar
+  companyStages         String[]  @map("company_stages") @db.VarChar
+  fundingStatuses       String[]  @map("funding_statuses") @db.VarChar
+  revenues              String[]  @db.VarChar
+  source                String?   @db.VarChar
+  ethnicities           String[]  @db.VarChar
+  gender                String?   @db.VarChar
+  pronouns              String?   @db.VarChar
+  user                  User      @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk investor_profile user_id")
+
+  @@map("investor_profile")
+}
+
+model InvestorType {
+  id          String    @id(map: "pk investor_type id") @default(nanoid()) @db.VarChar
+  description String    @db.VarChar
+  archived    Boolean
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  createdById String    @map("created_by_id") @db.VarChar
+  updatedAt   DateTime? @default(now()) @map("updated_at") @db.Timestamptz(6)
+  updatedById String?   @map("updated_by_id") @db.VarChar
+
+  @@map("investor_type")
+}
+
+model Migrations {
+  id        Int    @id(map: "pk migrations id") @default(autoincrement())
+  timestamp BigInt
+  name      String @db.VarChar
+
+  @@map("migrations")
+}
+
+model Organization {
+  id          String    @id(map: "pk organization id") @default(nanoid()) @db.VarChar
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  createdById String    @map("created_by_id") @db.VarChar
+  updatedAt   DateTime? @default(now()) @map("updated_at") @db.Timestamptz(6)
+  updatedById String?   @map("updated_by_id") @db.VarChar
+  deletedAt   String?   @map("deleted_at") @db.VarChar
+  deletedById String?   @map("deleted_by_id") @db.VarChar
+  version     Int
+  ownerId     String    @map("owner_id") @db.VarChar
+  userId      String    @map("user_id") @db.VarChar
+  name        String    @db.VarChar
+  website     String    @db.VarChar
+  user        User      @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk organization user_id")
+  pitches     Pitch[]
+  startup     Startup?
+
+  @@index([userId], map: "idx organization user_id")
+  @@map("organization")
+}
+
+model PasswordReset {
+  id          String    @id(map: "pk password_reset id") @default(nanoid()) @db.VarChar
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  createdById String    @map("created_by_id") @db.VarChar
+  updatedAt   DateTime? @default(now()) @map("updated_at") @db.Timestamptz(6)
+  updatedById String?   @map("updated_by_id") @db.VarChar
+  deletedAt   String?   @map("deleted_at") @db.VarChar
+  deletedById String?   @map("deleted_by_id") @db.VarChar
+  version     Int
+  ownerId     String    @map("owner_id") @db.VarChar
+  email       String    @db.VarChar
+  token       String    @unique(map: "uq password_reset token") @db.VarChar
+  expiresAt   DateTime  @map("expires_at") @db.Timestamptz(6)
+  status      String    @default("OPEN") @db.VarChar
+
+  @@map("password_reset")
+}
+
+model Perk {
+  id             String       @id(map: "pk perk id") @default(nanoid()) @db.VarChar
+  createdAt      DateTime     @default(now()) @map("created_at") @db.Timestamptz(6)
+  createdById    String       @map("created_by_id") @db.VarChar
+  updatedAt      DateTime?    @default(now()) @map("updated_at") @db.Timestamptz(6)
+  updatedById    String?      @map("updated_by_id") @db.VarChar
+  deletedAt      String?      @map("deleted_at") @db.VarChar
+  deletedById    String?      @map("deleted_by_id") @db.VarChar
+  version        Int
+  ownerId        String       @map("owner_id") @db.VarChar
+  companyName    String       @map("company_name") @db.VarChar
+  companyBio     String       @map("company_bio") @db.VarChar
+  description    String       @db.VarChar
+  perkCategoryId String       @map("perk_category_id") @db.VarChar
+  url            String       @db.VarChar
+  logoFileId     String       @unique(map: "uq perk logo_file_id") @map("logo_file_id") @db.VarChar
+  file           File         @relation(fields: [logoFileId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk perk logo_file_id")
+  perkCategory   PerkCategory @relation(fields: [perkCategoryId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk perk perk_category_id")
+
+  @@map("perk")
+}
+
+model PerkCategory {
+  id          String    @id(map: "pk perk_category id") @default(nanoid()) @db.VarChar
+  description String    @db.VarChar
+  archived    Boolean
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  createdById String    @map("created_by_id") @db.VarChar
+  updatedAt   DateTime? @default(now()) @map("updated_at") @db.Timestamptz(6)
+  updatedById String?   @map("updated_by_id") @db.VarChar
+  perks       Perk[]
+
+  @@map("perk_category")
+}
+
+model Permission {
+  id              String           @id(map: "pk permission id") @default(nanoid()) @db.VarChar
+  createdAt       DateTime         @default(now()) @map("created_at") @db.Timestamptz(6)
+  createdById     String           @map("created_by_id") @db.VarChar
+  updatedAt       DateTime?        @default(now()) @map("updated_at") @db.Timestamptz(6)
+  updatedById     String?          @map("updated_by_id") @db.VarChar
+  deletedAt       String?          @map("deleted_at") @db.VarChar
+  deletedById     String?          @map("deleted_by_id") @db.VarChar
+  version         Int
+  ownerId         String           @map("owner_id") @db.VarChar
+  code            String           @unique(map: "uq permission code") @db.VarChar(50)
+  description     String?          @db.VarChar(100)
+  rolePermissions RolePermission[]
+
+  @@map("permission")
+}
+
+model Pitch {
+  id                       String                 @id(map: "pk pitch id") @default(nanoid()) @db.VarChar
+  createdAt                DateTime               @default(now()) @map("created_at") @db.Timestamptz(6)
+  createdById              String                 @map("created_by_id") @db.VarChar
+  updatedAt                DateTime?              @default(now()) @map("updated_at") @db.Timestamptz(6)
+  updatedById              String?                @map("updated_by_id") @db.VarChar
+  deletedAt                String?                @map("deleted_at") @db.VarChar
+  deletedById              String?                @map("deleted_by_id") @db.VarChar
+  version                  Int
+  ownerId                  String                 @map("owner_id") @db.VarChar
+  userId                   String                 @map("user_id") @db.VarChar
+  organizationId           String                 @map("organization_id") @db.VarChar
+  views                    Int                    @default(0)
+  bookmarks                Int                    @default(0)
+  challenges               String?                @db.VarChar
+  status                   String                 @default("DRAFT") @db.VarChar
+  deckComfortLevel         Int?                   @map("deck_comfort_level")
+  presentationComfortLevel Int?                   @map("presentation_comfort_level")
+  presentationStatus       String?                @map("presentation_status") @db.VarChar
+  shortDescription         String?                @map("short_description") @db.VarChar
+  female                   Boolean                @default(false)
+  minority                 Boolean                @default(false)
+  course                   Course?
+  createdByUser            User                   @relation("pitch_created_by_idTouser", fields: [createdById], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk pitch created_by_id")
+  organization             Organization           @relation(fields: [organizationId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk pitch organization_id")
+  updatedByUser            User?                  @relation("pitch_updated_by_idTouser", fields: [updatedById], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk pitch updated_by_id")
+  user                     User                   @relation("pitch_user_idTouser", fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk pitch user_id")
+  pitchComments            PitchComment[]
+  pitchDecks               PitchDeck[]
+  pitchMeetingFeedbacks    PitchMeetingFeedback[]
+  pitchUpdates             PitchUpdate[]
+  pitchUserStatuses        PitchUserStatus[]
+  pitchVideos              PitchVideo[]
+  sitchWrittenFeedbacks    PitchWrittenFeedback[]
+
+  @@map("pitch")
+}
+
+model PitchComment {
+  id          String    @id(map: "pk pitch_comment id") @default(nanoid()) @db.VarChar
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  createdById String    @map("created_by_id") @db.VarChar
+  updatedAt   DateTime? @default(now()) @map("updated_at") @db.Timestamptz(6)
+  updatedById String?   @map("updated_by_id") @db.VarChar
+  deletedAt   String?   @map("deleted_at") @db.VarChar
+  deletedById String?   @map("deleted_by_id") @db.VarChar
+  version     Int
+  ownerId     String    @map("owner_id") @db.VarChar
+  body        String    @db.VarChar
+  pitchId     String    @map("pitch_id") @db.VarChar
+  visibility  String    @db.VarChar
+  user        User      @relation(fields: [createdById], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk pitch_comment created_by_id")
+  pitch       Pitch     @relation(fields: [pitchId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk pitch_comment pitch_id")
+
+  @@map("pitch_comment")
+}
+
+model PitchDeck {
+  id                               String                 @id(map: "pk pitch_deck id") @default(nanoid()) @db.VarChar
+  createdAt                        DateTime               @default(now()) @map("created_at") @db.Timestamptz(6)
+  createdById                      String                 @map("created_by_id") @db.VarChar
+  updatedAt                        DateTime?              @default(now()) @map("updated_at") @db.Timestamptz(6)
+  updatedById                      String?                @map("updated_by_id") @db.VarChar
+  deletedAt                        String?                @map("deleted_at") @db.VarChar
+  deletedById                      String?                @map("deleted_by_id") @db.VarChar
+  version                          Int
+  ownerId                          String                 @map("owner_id") @db.VarChar
+  pitchId                          String                 @map("pitch_id") @db.VarChar
+  fileId                           String                 @unique(map: "rc pitch_deck file_id") @map("file_id") @db.VarChar
+  status                           String                 @db.VarChar
+  draft                            Boolean                @default(false)
+  isCategorized                    Boolean                @default(false) @map("is_categorized")
+  numPages                         Int                    @default(0) @map("num_pages")
+  textContent                      String?                @map("text_content")
+  textSummary                      String?                @map("text_summary")
+  conversationMessages             ConversationMessage[]
+  file                             File                   @relation(fields: [fileId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk pitch_deck file_id")
+  pitch                            Pitch                  @relation(fields: [pitchId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk pitch_deck pitch_id")
+  pitchDeckSections                PitchDeckSection[]
+  originalPitchDeckWrittenFeedback PitchWrittenFeedback[] @relation("pitch_written_feedback_original_pitch_deck_idTopitch_deck")
+  reviewedPitchDeckWrittenFeedback PitchWrittenFeedback[] @relation("pitch_written_feedback_reviewed_pitch_deck_idTopitch_deck")
+
+  @@map("pitch_deck")
+}
+
+model PitchDeckSection {
+  id                     String                @id(map: "pk pitch_deck_section id") @default(nanoid()) @db.VarChar
+  pitchDeckId            String                @map("pitch_deck_id") @db.VarChar
+  pageNumber             Int                   @map("page_number")
+  courseStepDefinitionId String?               @map("course_step_definition_id") @db.VarChar
+  customSectionName      String?               @map("custom_section_name") @db.VarChar
+  courseStepDefinition   CourseStepDefinition? @relation(fields: [courseStepDefinitionId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  pitchDeck              PitchDeck             @relation(fields: [pitchDeckId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@unique([pitchDeckId, pageNumber])
+  @@index([pageNumber])
+  @@map("pitch_deck_section")
+}
+
+model PitchMeetingFeedback {
+  id              String        @id(map: "pk pitch_meeting_feedback id") @default(nanoid()) @db.VarChar
+  createdAt       DateTime      @default(now()) @map("created_at") @db.Timestamptz(6)
+  createdById     String        @map("created_by_id") @db.VarChar
+  updatedAt       DateTime?     @default(now()) @map("updated_at") @db.Timestamptz(6)
+  updatedById     String?       @map("updated_by_id") @db.VarChar
+  deletedAt       String?       @map("deleted_at") @db.VarChar
+  deletedById     String?       @map("deleted_by_id") @db.VarChar
+  version         Int
+  ownerId         String        @map("owner_id") @db.VarChar
+  pitchId         String        @map("pitch_id") @db.VarChar
+  recordingFileId String?       @map("recording_file_id") @db.VarChar
+  reviewerNotes   String?       @map("reviewer_notes") @db.VarChar
+  status          String        @default("REQUESTED") @db.VarChar
+  reviewerId      String?       @map("reviewer_id") @db.VarChar
+  courseProductId String        @map("course_product_id") @db.VarChar
+  courseProduct   CourseProduct @relation(fields: [courseProductId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk pitch_meeting_feedback course_product_id")
+  pitch           Pitch         @relation(fields: [pitchId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk pitch_meeting_feedback pitch_id")
+  file            File?         @relation(fields: [recordingFileId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk pitch_meeting_feedback recording_file_id")
+  reviewer        User?         @relation(fields: [reviewerId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk pitch_meeting_feedback reviewer_id")
+
+  @@map("pitch_meeting_feedback")
+}
+
+model PitchUpdate {
+  id          String    @id(map: "pk pitch_update id") @default(nanoid()) @db.VarChar
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  createdById String    @map("created_by_id") @db.VarChar
+  updatedAt   DateTime? @default(now()) @map("updated_at") @db.Timestamptz(6)
+  updatedById String?   @map("updated_by_id") @db.VarChar
+  deletedAt   String?   @map("deleted_at") @db.VarChar
+  deletedById String?   @map("deleted_by_id") @db.VarChar
+  version     Int
+  ownerId     String    @map("owner_id") @db.VarChar
+  body        String    @db.VarChar
+  pitchId     String    @map("pitch_id") @db.VarChar
+  user        User      @relation(fields: [createdById], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk pitch_update created_by_id")
+  pitch       Pitch     @relation(fields: [pitchId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk pitch_update pitch_id")
+
+  @@map("pitch_update")
+}
+
+model PitchUserStatus {
+  id                        String    @id(map: "pk pitch_user_status id") @default(nanoid()) @db.VarChar
+  createdAt                 DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  createdById               String    @map("created_by_id") @db.VarChar
+  updatedAt                 DateTime? @default(now()) @map("updated_at") @db.Timestamptz(6)
+  updatedById               String?   @map("updated_by_id") @db.VarChar
+  deletedAt                 String?   @map("deleted_at") @db.VarChar
+  deletedById               String?   @map("deleted_by_id") @db.VarChar
+  version                   Int
+  ownerId                   String    @map("owner_id") @db.VarChar
+  userId                    String    @map("user_id") @db.VarChar
+  pitchId                   String    @map("pitch_id") @db.VarChar
+  watchStatus               String    @default("UNWATCHED") @map("watch_status") @db.VarChar
+  listStatus                String    @default("DEFAULT") @map("list_status") @db.VarChar
+  notified                  Boolean   @default(false)
+  founderImpressionRating   Int?      @map("founder_impression_rating")
+  pitchMaterialsRating      Int?      @map("pitch_materials_rating")
+  businessIdeaRating        Int?      @map("business_idea_rating")
+  founderImpressionComments String?   @map("founder_impression_comments")
+  pitchMaterialsComments    String?   @map("pitch_materials_comments")
+  businessIdeaComments      String?   @map("business_idea_comments")
+  shareReviewWithFounder    Boolean   @default(true) @map("share_review_with_founder")
+  shareReviewDirectly       Boolean   @default(false) @map("share_review_directly")
+  pitch                     Pitch     @relation(fields: [pitchId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk pitch_user_status pitch_id")
+  user                      User      @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk pitch_user_status user_id")
+
+  @@unique([userId, pitchId], map: "uq pitch_user_status pitch_id+user_id")
+  @@map("pitch_user_status")
+}
+
+model PitchVideo {
+  id            String    @id(map: "pk pitch_video id") @default(nanoid()) @db.VarChar
+  createdAt     DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  createdById   String    @map("created_by_id") @db.VarChar
+  updatedAt     DateTime? @default(now()) @map("updated_at") @db.Timestamptz(6)
+  updatedById   String?   @map("updated_by_id") @db.VarChar
+  deletedAt     String?   @map("deleted_at") @db.VarChar
+  deletedById   String?   @map("deleted_by_id") @db.VarChar
+  version       Int
+  ownerId       String    @map("owner_id") @db.VarChar
+  status        String    @db.VarChar
+  pitchId       String    @map("pitch_id") @db.VarChar
+  videoId       String    @unique(map: "rc pitch_video video_id") @map("video_id") @db.VarChar
+  extendedVideo Boolean   @default(false) @map("extended_video")
+  pitch         Pitch     @relation(fields: [pitchId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk pitch_video pitch_id")
+  video         Video     @relation(fields: [videoId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk pitch_video video_id")
+
+  @@map("pitch_video")
+}
+
+model PitchWrittenFeedback {
+  id                           String                        @id(map: "pk pitch_written_feedback id") @default(nanoid()) @db.VarChar
+  createdAt                    DateTime                      @default(now()) @map("created_at") @db.Timestamptz(6)
+  createdById                  String                        @map("created_by_id") @db.VarChar
+  updatedAt                    DateTime?                     @default(now()) @map("updated_at") @db.Timestamptz(6)
+  updatedById                  String?                       @map("updated_by_id") @db.VarChar
+  deletedAt                    String?                       @map("deleted_at") @db.VarChar
+  deletedById                  String?                       @map("deleted_by_id") @db.VarChar
+  version                      Int
+  ownerId                      String                        @map("owner_id") @db.VarChar
+  pitchId                      String                        @map("pitch_id") @db.VarChar
+  reviewerNotes                String?                       @map("reviewer_notes") @db.VarChar
+  status                       String                        @default("REQUESTED") @db.VarChar
+  reviewerId                   String?                       @map("reviewer_id") @db.VarChar
+  courseProductId              String                        @map("course_product_id") @db.VarChar
+  originalPitchDeckId          String?                       @map("original_pitch_deck_id") @db.VarChar
+  reviewedPitchDeckId          String?                       @map("reviewed_pitch_deck_id") @db.VarChar
+  courseProduct                CourseProduct                 @relation(fields: [courseProductId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk pitch_written_feedback course_product_id")
+  originalPitchDeck            PitchDeck?                    @relation("pitch_written_feedback_original_pitch_deck_idTopitch_deck", fields: [originalPitchDeckId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk pitch_written_feedback original_pitch_deck_id")
+  pitch                        Pitch                         @relation(fields: [pitchId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk pitch_written_feedback pitch_id")
+  reviewedPitchDeck            PitchDeck?                    @relation("pitch_written_feedback_reviewed_pitch_deck_idTopitch_deck", fields: [reviewedPitchDeckId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk pitch_written_feedback reviewed_pitch_deck_id")
+  reviewer                     User?                         @relation(fields: [reviewerId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk pitch_written_feedback reviewer_id")
+  pitchWrittenFeedbackComments PitchWrittenFeedbackComment[]
+
+  @@map("pitch_written_feedback")
+}
+
+model Plan {
+  id                       String    @id(map: "pk plan id") @default(nanoid()) @db.VarChar
+  createdAt                DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  createdById              String    @map("created_by_id") @db.VarChar
+  updatedAt                DateTime? @default(now()) @map("updated_at") @db.Timestamptz(6)
+  updatedById              String?   @map("updated_by_id") @db.VarChar
+  deletedAt                String?   @map("deleted_at") @db.VarChar
+  deletedById              String?   @map("deleted_by_id") @db.VarChar
+  version                  Int
+  ownerId                  String    @map("owner_id") @db.VarChar
+  stripePlanId             String    @map("stripe_plan_id") @db.VarChar
+  stripePlanName           String    @map("stripe_plan_name") @db.VarChar
+  stripePlanDescription    String    @map("stripe_plan_description") @db.VarChar
+  stripePlanCurrency       String    @map("stripe_plan_currency") @db.VarChar
+  stripePlanPrice          Float     @map("stripe_plan_price")
+  stripePlanPeriod         String    @map("stripe_plan_period") @db.VarChar
+  userId                   String    @map("user_id") @db.VarChar
+  stripePlanSubscriptionId String    @map("stripe_plan_subscription_id") @db.VarChar
+  status                   String?   @db.VarChar
+  user                     User      @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk plan user_id")
+
+  @@map("plan")
+}
+
+model PresentationStatus {
+  id          String    @id(map: "pk presentation_status id") @default(nanoid()) @db.VarChar
+  description String    @db.VarChar
+  archived    Boolean
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  createdById String    @map("created_by_id") @db.VarChar
+  updatedAt   DateTime? @default(now()) @map("updated_at") @db.Timestamptz(6)
+  updatedById String?   @map("updated_by_id") @db.VarChar
+
+  @@map("presentation_status")
+}
+
+model Product {
+  id                      String                    @id(map: "pk product id") @default(nanoid()) @db.VarChar
+  createdAt               DateTime                  @default(now()) @map("created_at") @db.Timestamptz(6)
+  createdById             String                    @map("created_by_id") @db.VarChar
+  updatedAt               DateTime?                 @default(now()) @map("updated_at") @db.Timestamptz(6)
+  updatedById             String?                   @map("updated_by_id") @db.VarChar
+  deletedAt               String?                   @map("deleted_at") @db.VarChar
+  deletedById             String?                   @map("deleted_by_id") @db.VarChar
+  version                 Int
+  ownerId                 String                    @map("owner_id") @db.VarChar
+  name                    String                    @db.VarChar
+  description             String                    @db.VarChar
+  courseDefinitionProduct CourseDefinitionProduct[]
+  courseProduct           CourseProduct[]
+
+  @@map("product")
+}
+
+model Pronoun {
+  id          String    @id(map: "pk pronoun id") @default(nanoid()) @db.VarChar
+  description String    @db.VarChar
+  archived    Boolean
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  createdById String    @map("created_by_id") @db.VarChar
+  updatedAt   DateTime? @default(now()) @map("updated_at") @db.Timestamptz(6)
+  updatedById String?   @map("updated_by_id") @db.VarChar
+
+  @@map("pronoun")
+}
+
+model Revenue {
+  id          String    @id(map: "pk revenue id") @default(nanoid()) @db.VarChar
+  description String    @db.VarChar
+  archived    Boolean
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  createdById String    @map("created_by_id") @db.VarChar
+  updatedAt   DateTime? @default(now()) @map("updated_at") @db.Timestamptz(6)
+  updatedById String?   @map("updated_by_id") @db.VarChar
+
+  @@map("revenue")
+}
+
+model Role {
+  id             String           @id(map: "pk role id") @default(nanoid()) @db.VarChar
+  createdAt      DateTime         @default(now()) @map("created_at") @db.Timestamptz(6)
+  createdById    String           @map("created_by_id") @db.VarChar
+  updatedAt      DateTime?        @default(now()) @map("updated_at") @db.Timestamptz(6)
+  updatedById    String?          @map("updated_by_id") @db.VarChar
+  deletedAt      String?          @map("deleted_at") @db.VarChar
+  deletedById    String?          @map("deleted_by_id") @db.VarChar
+  version        Int
+  ownerId        String           @map("owner_id") @db.VarChar
+  name           String           @db.VarChar
+  code           String           @unique(map: "uq role code") @db.VarChar(50)
+  rolePermission RolePermission[]
+  userRoles      UserRole[]
+  userTypes      UserType[]
+
+  @@map("role")
+}
+
+model RolePermission {
+  id           String     @id(map: "pk role_permission id") @default(nanoid()) @db.VarChar
+  createdAt    DateTime   @default(now()) @map("created_at") @db.Timestamptz(6)
+  createdById  String     @map("created_by_id") @db.VarChar
+  updatedAt    DateTime?  @default(now()) @map("updated_at") @db.Timestamptz(6)
+  updatedById  String?    @map("updated_by_id") @db.VarChar
+  deletedAt    String?    @map("deleted_at") @db.VarChar
+  deletedById  String?    @map("deleted_by_id") @db.VarChar
+  version      Int
+  ownerId      String     @map("owner_id") @db.VarChar
+  permissionId String     @map("permission_id") @db.VarChar
+  roleId       String     @map("role_id") @db.VarChar
+  permission   Permission @relation(fields: [permissionId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk role_permission permission_id")
+  role         Role       @relation(fields: [roleId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk role_permission role_id")
+
+  @@unique([roleId, permissionId], map: "uq role_permission permission_id+role_id")
+  @@map("role_permission")
+}
+
+model Session {
+  id           String    @id(map: "pk session id") @default(nanoid()) @db.VarChar
+  createdAt    DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  createdById  String    @map("created_by_id") @db.VarChar
+  updatedAt    DateTime? @default(now()) @map("updated_at") @db.Timestamptz(6)
+  updatedById  String?   @map("updated_by_id") @db.VarChar
+  deletedAt    String?   @map("deleted_at") @db.VarChar
+  deletedById  String?   @map("deleted_by_id") @db.VarChar
+  version      Int
+  ownerId      String    @map("owner_id") @db.VarChar
+  userId       String    @map("user_id") @db.VarChar
+  expires      DateTime  @db.Timestamptz(6)
+  sessionToken String    @unique(map: "uq session session_token") @map("session_token") @db.VarChar
+  accessToken  String    @unique(map: "uq session access_token") @map("access_token") @db.VarChar
+
+  @@map("session")
+}
+
+model SexualOrientation {
+  id          String    @id(map: "pk sexual_orientation id") @default(nanoid()) @db.VarChar
+  description String    @db.VarChar
+  archived    Boolean
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  createdById String    @map("created_by_id") @db.VarChar
+  updatedAt   DateTime? @default(now()) @map("updated_at") @db.Timestamptz(6)
+  updatedById String?   @map("updated_by_id") @db.VarChar
+
+  @@map("sexual_orientation")
+}
+
+model Startup {
+  id                       String       @id(map: "pk startup id") @default(nanoid()) @db.VarChar
+  createdAt                DateTime     @default(now()) @map("created_at") @db.Timestamptz(6)
+  createdById              String       @map("created_by_id") @db.VarChar
+  updatedAt                DateTime?    @default(now()) @map("updated_at") @db.Timestamptz(6)
+  updatedById              String?      @map("updated_by_id") @db.VarChar
+  deletedAt                String?      @map("deleted_at") @db.VarChar
+  deletedById              String?      @map("deleted_by_id") @db.VarChar
+  version                  Int
+  ownerId                  String       @map("owner_id") @db.VarChar
+  name                     String?      @db.VarChar
+  website                  String?      @db.VarChar
+  corporateStructure       String?      @map("corporate_structure") @db.VarChar
+  stateProvince            String?      @map("state_province") @db.VarChar
+  fundraiseStatus          String?      @map("fundraise_status") @db.VarChar
+  companyStage             String?      @map("company_stage") @db.VarChar
+  revenue                  String?      @db.VarChar
+  shortDescription         String?      @map("short_description") @db.VarChar
+  tinyDescription          String?      @map("tiny_description") @db.VarChar
+  organizationId           String       @unique(map: "rc startup organization_id") @map("organization_id") @db.VarChar
+  industries               String[]     @default([]) @db.VarChar
+  originStory              String?      @map("origin_story") @db.VarChar
+  additionalTeamMembers    Boolean?     @map("additional_team_members")
+  businessChallenge        String?      @map("business_challenge") @db.VarChar
+  presentationStatus       String?      @map("presentation_status") @db.VarChar
+  desiredSupport           String?      @map("desired_support") @db.VarChar
+  anythingElse             String?      @map("anything_else") @db.VarChar
+  country                  String?      @db.VarChar
+  deckComfortLevel         Int?         @map("deck_comfort_level")
+  presentationComfortLevel Int?         @map("presentation_comfort_level")
+  userId                   String       @map("user_id") @db.VarChar
+  organization             Organization @relation(fields: [organizationId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk startup organization_id")
+
+  @@map("startup")
+}
+
+model StateProvince {
+  id          String    @id(map: "pk state_province id") @default(nanoid()) @db.VarChar
+  description String    @db.VarChar
+  archived    Boolean
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  createdById String    @map("created_by_id") @db.VarChar
+  updatedAt   DateTime? @default(now()) @map("updated_at") @db.Timestamptz(6)
+  updatedById String?   @map("updated_by_id") @db.VarChar
+  city        City[]
+
+  @@map("state_province")
+}
+
+model StripeWebhookEvent {
+  id          String    @id(map: "pk stripe_webhook_event id") @default(nanoid()) @db.VarChar
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  createdById String    @map("created_by_id") @db.VarChar
+  updatedAt   DateTime? @default(now()) @map("updated_at") @db.Timestamptz(6)
+  updatedById String?   @map("updated_by_id") @db.VarChar
+  deletedAt   String?   @map("deleted_at") @db.VarChar
+  deletedById String?   @map("deleted_by_id") @db.VarChar
+  version     Int
+  ownerId     String    @map("owner_id") @db.VarChar
+  type        String    @db.VarChar
+  raw         Json
+  status      String    @default("NEW") @db.VarChar
+
+  @@map("stripe_webhook_event")
+}
+
+model Subscription {
+  id          String    @id(map: "pk subscription id") @default(nanoid()) @db.VarChar
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  createdById String    @map("created_by_id") @db.VarChar
+  updatedAt   DateTime? @default(now()) @map("updated_at") @db.Timestamptz(6)
+  updatedById String?   @map("updated_by_id") @db.VarChar
+  deletedAt   String?   @map("deleted_at") @db.VarChar
+  deletedById String?   @map("deleted_by_id") @db.VarChar
+  version     Int
+  ownerId     String    @map("owner_id") @db.VarChar
+  eventTypeId String    @map("event_type_id") @db.VarChar
+  type        String    @db.VarChar
+  url         String?   @db.VarChar
+  jobId       String?   @map("job_id") @db.VarChar
+  active      Boolean?  @default(true)
+
+  @@map("subscription")
+}
+
+model SuggestedResource {
+  id                          String                    @id(map: "pk suggested_resource id") @default(nanoid()) @db.VarChar
+  createdAt                   DateTime                  @default(now()) @map("created_at") @db.Timestamptz(6)
+  createdById                 String                    @map("created_by_id") @db.VarChar
+  updatedAt                   DateTime?                 @default(now()) @map("updated_at") @db.Timestamptz(6)
+  updatedById                 String?                   @map("updated_by_id") @db.VarChar
+  deletedAt                   String?                   @map("deleted_at") @db.VarChar
+  deletedById                 String?                   @map("deleted_by_id") @db.VarChar
+  version                     Int
+  ownerId                     String                    @map("owner_id") @db.VarChar
+  companyName                 String                    @map("company_name") @db.VarChar
+  suggestedResourceCategoryId String                    @map("suggested_resource_category_id") @db.VarChar
+  url                         String                    @db.VarChar
+  logoFileId                  String                    @unique(map: "rc suggested_resource logo_file_id") @map("logo_file_id") @db.VarChar
+  description                 String?                   @db.VarChar
+  file                        File                      @relation(fields: [logoFileId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk suggested_resource logo_file_id")
+  suggestedResourceCategory   SuggestedResourceCategory @relation(fields: [suggestedResourceCategoryId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk suggested_resource suggested_resource_category_id")
+
+  @@map("suggested_resource")
+}
+
+model SuggestedResourceCategory {
+  id                 String              @id(map: "pk suggested_resource_category id") @default(nanoid()) @db.VarChar
+  description        String              @db.VarChar
+  archived           Boolean
+  createdAt          DateTime            @default(now()) @map("created_at") @db.Timestamptz(6)
+  createdById        String              @map("created_by_id") @db.VarChar
+  updatedAt          DateTime?           @default(now()) @map("updated_at") @db.Timestamptz(6)
+  updatedById        String?             @map("updated_by_id") @db.VarChar
+  suggestedResources SuggestedResource[]
+
+  @@map("suggested_resource_category")
+}
+
+model Transgender {
+  id          String    @id(map: "pk transgender id") @default(nanoid()) @db.VarChar
+  description String    @db.VarChar
+  archived    Boolean
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  createdById String    @map("created_by_id") @db.VarChar
+  updatedAt   DateTime? @default(now()) @map("updated_at") @db.Timestamptz(6)
+  updatedById String?   @map("updated_by_id") @db.VarChar
+
+  @@map("transgender")
+}
+
+model User {
+  id                           String                        @id(map: "pk user id") @default(nanoid()) @db.VarChar
+  createdAt                    DateTime                      @default(now()) @map("created_at") @db.Timestamptz(6)
+  createdById                  String                        @map("created_by_id") @db.VarChar
+  updatedAt                    DateTime?                     @default(now()) @map("updated_at") @db.Timestamptz(6)
+  updatedById                  String?                       @map("updated_by_id") @db.VarChar
+  deletedAt                    String?                       @map("deleted_at") @db.VarChar
+  deletedById                  String?                       @map("deleted_by_id") @db.VarChar
+  version                      Int
+  ownerId                      String                        @map("owner_id") @db.VarChar
+  name                         String                        @db.VarChar
+  email                        String                        @unique(map: "uq user email") @db.VarChar
+  emailVerified                DateTime?                     @map("email_verified") @db.Timestamptz(6)
+  password                     String?                       @db.VarChar
+  status                       String                        @default("INACTIVE") @db.VarChar
+  capabilities                 String[]                      @db.VarChar
+  lastLoginAt                  DateTime?                     @map("last_login_at") @db.Timestamptz(6)
+  migratedFromBubble           Boolean?                      @default(false) @map("migrated_from_bubble")
+  isAccredited                 Boolean?                      @default(false) @map("is_accredited")
+  firstName                    String?                       @map("first_name") @db.VarChar
+  profilePictureFileId         String                        @unique(map: "uq user profile_picture_file_id") @map("profile_picture_file_id") @db.VarChar
+  stripeUserId                 String?                       @map("stripe_user_id") @db.VarChar
+  authAccounts                 AuthAccount[]
+  conversationMessages         ConversationMessage[]
+  conversationParticipants     ConversationParticipant[]
+  courseSteps                  CourseStep[]
+  externalSystemIds            ExternalSystemId[]
+  investorProfiles             InvestorProfile?
+  organizations                Organization[]
+  pitchesCreatedByUser         Pitch[]                       @relation("pitch_created_by_idTouser")
+  pitchesUpdatedByUser         Pitch[]                       @relation("pitch_updated_by_idTouser")
+  pitches                      Pitch[]                       @relation("pitch_user_idTouser")
+  pitchComments                PitchComment[]
+  pitchMeetingFeedbacks        PitchMeetingFeedback[]
+  pitchUpdates                 PitchUpdate[]
+  pitchUserStatuses            PitchUserStatus[]
+  pitchWrittenFeedbacks        PitchWrittenFeedback[]
+  PitchWrittenFeedbackComments PitchWrittenFeedbackComment[]
+  plans                        Plan[]
+  profilePicture               File                          @relation(fields: [profilePictureFileId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk user profile_picture_file_id")
+  userActivities               UserActivity[]
+  userPlanRegistrations        UserPlanRegistration[]
+
+  @@map("user")
+}
+
+model UserActivity {
+  id          String    @id(map: "pk user_activity id") @default(nanoid()) @db.VarChar
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  createdById String    @map("created_by_id") @db.VarChar
+  updatedAt   DateTime? @default(now()) @map("updated_at") @db.Timestamptz(6)
+  updatedById String?   @map("updated_by_id") @db.VarChar
+  deletedAt   String?   @map("deleted_at") @db.VarChar
+  deletedById String?   @map("deleted_by_id") @db.VarChar
+  version     Int
+  ownerId     String    @map("owner_id") @db.VarChar
+  eventType   String    @map("event_type") @db.VarChar
+  user        User      @relation(fields: [createdById], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk user_activity created_by_id")
+
+  @@map("user_activity")
+}
+
+model UserInvite {
+  id          String    @id(map: "pk user_invite id") @default(nanoid()) @db.VarChar
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  createdById String    @map("created_by_id") @db.VarChar
+  updatedAt   DateTime? @default(now()) @map("updated_at") @db.Timestamptz(6)
+  updatedById String?   @map("updated_by_id") @db.VarChar
+  deletedAt   String?   @map("deleted_at") @db.VarChar
+  deletedById String?   @map("deleted_by_id") @db.VarChar
+  version     Int
+  ownerId     String    @map("owner_id") @db.VarChar
+  email       String    @db.VarChar
+  userType    String    @map("user_type") @db.VarChar
+  expiresAt   DateTime? @map("expires_at") @db.Timestamptz(6)
+  status      String    @default("OPEN") @db.VarChar
+
+  @@map("user_invite")
+}
+
+model UserPlanRegistration {
+  id                   String    @id(map: "pk user_plan_registration id") @default(nanoid()) @db.VarChar
+  createdAt            DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  createdById          String    @map("created_by_id") @db.VarChar
+  updatedAt            DateTime? @default(now()) @map("updated_at") @db.Timestamptz(6)
+  updatedById          String?   @map("updated_by_id") @db.VarChar
+  deletedAt            String?   @map("deleted_at") @db.VarChar
+  deletedById          String?   @map("deleted_by_id") @db.VarChar
+  version              Int
+  ownerId              String    @map("owner_id") @db.VarChar
+  email                String    @db.VarChar
+  fullName             String    @map("full_name") @db.VarChar
+  stripeSubscriptionId String    @map("stripe_subscription_id") @db.VarChar
+  stripePlanId         String    @map("stripe_plan_id") @db.VarChar
+  raw                  Json
+  status               String    @default("INPROGRESS") @db.VarChar
+  userId               String    @map("user_id") @db.VarChar
+  userType             String    @map("user_type") @db.VarChar
+  user                 User      @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk user_plan_registration user_id")
+
+  @@map("user_plan_registration")
+}
+
+model UserRole {
+  id           String    @id(map: "pk user_role id") @default(nanoid()) @db.VarChar
+  createdAt    DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  createdById  String    @map("created_by_id") @db.VarChar
+  updatedAt    DateTime? @default(now()) @map("updated_at") @db.Timestamptz(6)
+  updatedById  String?   @map("updated_by_id") @db.VarChar
+  deletedAt    String?   @map("deleted_at") @db.VarChar
+  deletedById  String?   @map("deleted_by_id") @db.VarChar
+  version      Int
+  ownerId      String    @map("owner_id") @db.VarChar
+  userId       String    @map("user_id") @db.VarChar
+  roleId       String    @map("role_id") @db.VarChar
+  organization String?   @db.VarChar
+  role         Role      @relation(fields: [roleId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk user_role role_id")
+
+  @@unique([userId, roleId], map: "uq user_role role_id+user_id")
+  @@map("user_role")
+}
+
+model UserType {
+  id                    String    @id(map: "pk user_type id") @default(nanoid()) @db.VarChar
+  createdAt             DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  createdById           String    @map("created_by_id") @db.VarChar
+  updatedAt             DateTime? @default(now()) @map("updated_at") @db.Timestamptz(6)
+  updatedById           String?   @map("updated_by_id") @db.VarChar
+  deletedAt             String?   @map("deleted_at") @db.VarChar
+  deletedById           String?   @map("deleted_by_id") @db.VarChar
+  version               Int
+  ownerId               String    @map("owner_id") @db.VarChar
+  type                  String    @db.VarChar
+  defaultRoleId         String    @map("default_role_id") @db.VarChar
+  allowedAtRegistration Boolean   @map("allowed_at_registration")
+  role                  Role      @relation(fields: [defaultRoleId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk user_type default_role_id")
+
+  @@map("user_type")
+}
+
+model VerificationRequest {
+  id          String    @id(map: "pk verification_request id") @default(nanoid()) @db.VarChar
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  createdById String    @map("created_by_id") @db.VarChar
+  updatedAt   DateTime? @default(now()) @map("updated_at") @db.Timestamptz(6)
+  updatedById String?   @map("updated_by_id") @db.VarChar
+  deletedAt   String?   @map("deleted_at") @db.VarChar
+  deletedById String?   @map("deleted_by_id") @db.VarChar
+  version     Int
+  ownerId     String    @map("owner_id") @db.VarChar
+  identifier  String    @db.VarChar
+  token       String    @unique(map: "uq verification_request token") @db.VarChar
+  expires     DateTime  @db.Timestamptz(6)
+
+  @@map("verification_request")
+}
+
+model Video {
+  id               String      @id(map: "pk video id") @default(nanoid()) @db.VarChar
+  createdAt        DateTime    @default(now()) @map("created_at") @db.Timestamptz(6)
+  createdById      String      @map("created_by_id") @db.VarChar
+  updatedAt        DateTime?   @default(now()) @map("updated_at") @db.Timestamptz(6)
+  updatedById      String?     @map("updated_by_id") @db.VarChar
+  deletedAt        String?     @map("deleted_at") @db.VarChar
+  deletedById      String?     @map("deleted_by_id") @db.VarChar
+  version          Int
+  ownerId          String      @map("owner_id") @db.VarChar
+  fileId           String      @unique(map: "uq video file_id") @map("file_id") @db.VarChar
+  wistiaId         String      @map("wistia_id") @db.VarChar
+  transcription    String?
+  transcriptionRaw Json?       @map("transcription_raw")
+  pitchVideo       PitchVideo?
+  file             File        @relation(fields: [fileId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk video file_id")
+
+  @@map("video")
+}
+
+model WorkingStatus {
+  id          String    @id(map: "pk working_status id") @default(nanoid()) @db.VarChar
+  description String    @db.VarChar
+  archived    Boolean
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  createdById String    @map("created_by_id") @db.VarChar
+  updatedAt   DateTime? @default(now()) @map("updated_at") @db.Timestamptz(6)
+  updatedById String?   @map("updated_by_id") @db.VarChar
+
+  @@map("working_status")
+}
+
+model PitchWrittenFeedbackComment {
+  id                     String               @default(nanoid())
+  v                      Int
+  createdAt              DateTime             @default(now()) @map("created_at") @db.Timestamptz(6)
+  createdById            String               @map("created_by_id") @db.VarChar
+  updatedAt              DateTime?            @default(now()) @map("updated_at") @db.Timestamptz(6)
+  updatedById            String?              @map("updated_by_id") @db.VarChar
+  deletedAt              String?              @map("deleted_at") @db.VarChar
+  deletedById            String?              @map("deleted_by_id") @db.VarChar
+  version                Int                  @default(1)
+  ownerId                String               @map("owner_id") @db.VarChar
+  details                Json?
+  changeReason           String?              @map("change_reason") @db.VarChar
+  isActive               Boolean              @default(false) @map("is_active")
+  pitchWrittenFeedbackId String               @map("pitch_written_feedback_id") @db.VarChar
+  pitchWrittenFeedback   PitchWrittenFeedback @relation(fields: [pitchWrittenFeedbackId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk pitch_written_feedback pitch_written_feedback_id")
+  author                 User                 @relation(fields: [createdById], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk pitch_written_feedback_comment created_by_id")
+
+  @@id([id, v], map: "pk pitch_written_feedback_comment id v")
+  @@map("pitch_written_feedback_comment")
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+model bubble_allison_suggested_resource {
+  category String?
+  name     String?
+  url      String?
+
+  @@ignore
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+model bubble_company {
+  co_hq_location            String?  @map("co.hq location")
+  company_name              String?  @map("company name")
+  companystage              String?
+  country_of_incorporation  String?  @map("country of incorporation")
+  deck_comfort_lvl          String?  @map("deck comfort lvl")
+  description               String?
+  elevator_pitch            String?  @map("elevator pitch")
+  employee_id               String?
+  fundraisestatus           String?
+  industry                  String?
+  origin_story              String?  @map("origin story")
+  pitch_deck                String?  @map("pitch deck")
+  pitch_id                  String?
+  presentation_comfort_lvl  String?  @map("presentation comfort lvl")
+  presented                 String?
+  revenue                   String?
+  teamMembers               String?
+  u_s_corporatestructure    String?  @map("u.s.corporatestructure")
+  user_id                   String?
+  website                   String?
+  Creation_Date             String?  @map("Creation Date")
+  Modified_Date             String?  @map("Modified Date")
+  Slug                      String?
+  Creator                   String?
+  unique_id                 String?  @map("unique id")
+  clean_company_state       String?  @db.VarChar
+  clean_company_stage       String?  @db.VarChar
+  clean_country             String?  @db.VarChar
+  clean_funding_status      String?  @db.VarChar
+  clean_presented           String?  @db.VarChar
+  clean_revenue             String?  @db.VarChar
+  clean_corporate_structure String?  @db.VarChar
+  clean_industries          String[] @db.VarChar
+  clean_team_members        Boolean?
+
+  @@ignore
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+model bubble_company_pitch {
+  company_id       String?
+  pitch_challenges String? @map("pitch challenges")
+  Creation_Date    String? @map("Creation Date")
+  Modified_Date    String? @map("Modified Date")
+  Slug             String?
+  Creator          String?
+  unique_id        String? @map("unique id")
+
+  @@ignore
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+model bubble_employee {
+  companyRole          String?
+  user_id              String?
+  workingStatus        String?
+  Creation_Date        String?  @map("Creation Date")
+  Modified_Date        String?  @map("Modified Date")
+  Slug                 String?
+  Creator              String?
+  unique_id            String?  @map("unique id")
+  clean_company_roles  String[] @db.VarChar
+  clean_working_status String?  @db.VarChar
+  valid_record         Boolean?
+
+  @@ignore
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+model bubble_founder_video_id {
+  user_id       String?
+  video_id      String?
+  Creation_Date String? @map("Creation Date")
+  Modified_Date String? @map("Modified Date")
+  Slug          String?
+  Creator       String?
+  unique_id     String? @map("unique id")
+
+  @@ignore
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+model bubble_module_1 {
+  checkbox_req1      String? @map("checkbox req1")
+  checkbox_req2      String? @map("checkbox req2")
+  checkbox_req3      String? @map("checkbox req3")
+  checkbox_req4      String? @map("checkbox req4")
+  checkbox_req5      String? @map("checkbox req5")
+  extra_pitch_review String? @map("extra pitch review")
+  feedback_1         String? @map("feedback 1")
+  feedback_2         String? @map("feedback 2")
+  first_name         String?
+  pitch_review_      String? @map("pitch review ")
+  progress           String?
+  user_id            String?
+  Creation_Date      String? @map("Creation Date")
+  Modified_Date      String? @map("Modified Date")
+  Slug               String?
+  Creator            String?
+  unique_id          String? @map("unique id")
+
+  @@ignore
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+model bubble_module_2 {
+  checkbox_req1      String? @map("checkbox req1")
+  checkbox_req2      String? @map("checkbox req2")
+  extra_pitch_review String? @map("extra pitch review")
+  feedback_1         String? @map("feedback 1")
+  feedback_2         String? @map("feedback 2")
+  first_name         String?
+  pitch_review       String? @map("pitch review")
+  progress           String?
+  user_id            String?
+  Creation_Date      String? @map("Creation Date")
+  Modified_Date      String? @map("Modified Date")
+  Slug               String?
+  Creator            String?
+  unique_id          String? @map("unique id")
+
+  @@ignore
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+model bubble_module_3 {
+  checkbox_req1      String? @map("checkbox req1")
+  checkbox_req2      String? @map("checkbox req2")
+  extra_pitch_review String? @map("extra pitch review")
+  feedback_1         String? @map("feedback 1")
+  feedback_2         String? @map("feedback 2")
+  first_name         String?
+  pitch_review       String? @map("pitch review")
+  progress           String?
+  user_id            String?
+  Creation_Date      String? @map("Creation Date")
+  Modified_Date      String? @map("Modified Date")
+  Slug               String?
+  Creator            String?
+  unique_id          String? @map("unique id")
+
+  @@ignore
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+model bubble_module_4 {
+  checkbox_req1      String? @map("checkbox req1")
+  checkbox_req2      String? @map("checkbox req2")
+  checkbox_req3      String? @map("checkbox req3")
+  extra_pitch_review String? @map("extra pitch review")
+  feedback_1         String? @map("feedback 1")
+  feedback_2         String? @map("feedback 2")
+  first_name         String?
+  pitch_review       String? @map("pitch review")
+  progress           String?
+  user_id            String?
+  Creation_Date      String? @map("Creation Date")
+  Modified_Date      String? @map("Modified Date")
+  Slug               String?
+  Creator            String?
+  unique_id          String? @map("unique id")
+
+  @@ignore
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+model bubble_module_5 {
+  checkbox_req1      String? @map("checkbox req1")
+  checkbox_req2      String? @map("checkbox req2")
+  checkbox_req3      String? @map("checkbox req3")
+  checkbox_req4      String? @map("checkbox req4")
+  checkbox_req5      String? @map("checkbox req5")
+  extra_pitch_review String? @map("extra pitch review")
+  feedback_1         String? @map("feedback 1")
+  feedback_2         String? @map("feedback 2")
+  first_name         String?
+  pitch_review_      String? @map("pitch review ")
+  progress           String?
+  user_id            String?
+  Creation_Date      String? @map("Creation Date")
+  Modified_Date      String? @map("Modified Date")
+  Slug               String?
+  Creator            String?
+  unique_id          String? @map("unique id")
+
+  @@ignore
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+model bubble_perk {
+  company_description String? @map("company description")
+  company_logo        String? @map("company logo")
+  company_name        String? @map("company name")
+  headline            String?
+  website_url         String? @map("website url")
+  Creation_Date       String? @map("Creation Date")
+  Modified_Date       String? @map("Modified Date")
+  Slug                String?
+  Creator             String?
+  unique_id           String? @map("unique id")
+
+  @@ignore
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+model bubble_reviews_completed {
+  unique_id   String?  @map("unique id")
+  email       String?
+  written_1   Boolean?
+  written_2   Boolean?
+  video_1     Boolean?
+  video_extra Boolean?
+  progress    Int?
+
+  @@ignore
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+model bubble_user {
+  anything_else             String? @map("anything else")
+  Business_challenge        String? @map("Business challenge")
+  company_id                String?
+  completed_on_boarding     String? @map("completed on-boarding")
+  disability                String?
+  employee_id               String?
+  ethnicity                 String?
+  first_name                String?
+  founder_partner_id        String?
+  gender                    String?
+  investor_about_Scroobious String?
+  investor_anything_else    String?
+  investor_mem_id           String?
+  investor_quests_id        String?
+  last_login                String? @map("last login")
+  last_name                 String?
+  linkedin_link             String? @map("linkedin link")
+  location                  String?
+  mod_1_id                  String?
+  mod_2_id                  String?
+  mod_3_id                  String?
+  mod_4_id                  String?
+  mod_5_id                  String?
+  newsletter                String?
+  orientation               String?
+  partner_org_id            String?
+  source                    String?
+  support                   String?
+  transgender               String?
+  twitter_link              String? @map("twitter link")
+  User_type                 String? @map("User type")
+  visited_page_before       String? @map("visited page before")
+  wistia_video_id           String?
+  Creation_Date             String? @map("Creation Date")
+  Modified_Date             String? @map("Modified Date")
+  Slug                      String?
+  email                     String?
+  null                      String?
+  unique_id                 String? @map("unique id")
+  migrate_record            String? @db.VarChar
+  clean_ethnicity           String? @db.VarChar
+  clean_disability          String? @db.VarChar
+  clean_gender              String? @db.VarChar
+  clean_sexual_orientation  String? @db.VarChar
+  clean_transgender         String? @db.VarChar
+
+  @@ignore
+}

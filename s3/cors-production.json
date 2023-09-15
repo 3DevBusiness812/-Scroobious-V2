@@ -1,0 +1,20 @@
+{
+    "CORSRules": [
+        {
+            "AllowedHeaders": [
+                "*"
+            ],
+            "AllowedMethods": [
+                "PUT",
+                "GET",
+                "POST"
+            ],
+            "AllowedOrigins": [
+                "https://app.scroobious.com",
+                "https://v2.scroobious.com",
+                "https://reviewer.scroobious.com",
+                "https://*.scroobious.com"
+            ]
+        }
+    ]
+}
